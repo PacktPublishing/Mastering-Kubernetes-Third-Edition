@@ -1,1 +1,0 @@
-$ docker build . -t g1g1/hue-job-scheduler:1.0
