@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: some-pod-manual-scheduling
+spec:
+  containers:
+    - name: some-container
+      image: gcr.io/google_containers/pause:2.0
+  nodeName: k3d-k3s-default-worker-1
+  schedulerName: no-such-scheduler
