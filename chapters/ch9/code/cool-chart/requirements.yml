@@ -1,7 +1,0 @@
-dependencies:
-  - name: foo
-    version: 1.2.3
-    repository: http://example.com/charts
-  - name: bar
-    version: 43.52.6
-    repository: http://another.example.com/charts
