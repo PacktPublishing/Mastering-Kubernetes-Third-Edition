@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: now
-spec:
-  containers:
-    - name: now
-      image: g1g1/py-kube:0.2
-      command: ["/bin/bash", "-c", "while true; do sleep 10; date; done"]
