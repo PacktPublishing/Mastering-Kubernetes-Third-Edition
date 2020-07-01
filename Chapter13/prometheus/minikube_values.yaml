@@ -1,0 +1,65 @@
+# values_minikube.yaml
+# Tested with stable/prometheus-operator v8.5.4
+# https://medium.com/@eduardobaitello/trying-prometheus-operator-with-helm-minikube-b617a2dccfa3
+coreDns:
+  service:
+    selector:
+      k8s-app: kube-dns
+
+kubeControllerManager:
+  service:
+    selector:
+      k8s-app: null
+      component: kube-controller-manager
+
+kubeEtcd:
+  service:
+    selector:
+      k8s-app: null
+      component: etcd
+
+kubeScheduler:
+  service:
+    selector:
+      k8s-app: null
+      component: kube-scheduler
+
+## Configuration for alertmanager
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'slack'
+      routes:
+        - match:
+            alertname: Watchdog
+          receiver: 'null'
+    # This inhibt rule is a hack from: https://stackoverflow.com/questions/54806336/how-to-silence-prometheus-alertmanager-using-config-files/54814033#54814033
+    inhibit_rules:
+      - target_match_re:
+          alertname: '.+Overcommit'
+        source_match:
+          alertname: 'Watchdog'
+        equal: ['prometheus']
+    receivers:
+      - name: 'null'
+      - name: 'slack'
+        slack_configs:
+          - api_url: 'https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK_HERE' # <--- REPLACE THIS WITH YOUR SLACK WEBHOOK
+            send_resolved: true
+            channel: '#notif-channel' # <--- REPLACE THIS WITH YOUR SLACK CHANNEL
+            title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
+            text: |-
+              {{ range .Alerts }}
+                *Alert:* {{ .Labels.alertname }} - `{{ .Labels.severity }}`
+                *Description:* {{ .Annotations.message }}
+                *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
+                *Details:*
+                {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+                {{ end }}
+              {{ end }}
