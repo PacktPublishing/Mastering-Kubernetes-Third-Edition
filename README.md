@@ -21,6 +21,9 @@ metadata:
 
 ```
 
+## Errata 
+ * Page 20 (Under Deploy):  **In the code at the bottom of the page, it states "systemctl enable kublet" ** _should be_ **where is should be "systemctl enable kubelet" with the 'e' after 'kub' and before the 'let' in 'kubelet'**
+
 
 ## Related Products
 * [Python Automation Cookbook - Second Edition](https://www.packtpub.com/programming/python-automation-cookbook-second-edition)
